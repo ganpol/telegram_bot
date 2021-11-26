@@ -1,14 +1,8 @@
 import telebot
-
-TOKEN = '2049636346:AAEjEJTXrXhJU3zLspBnIF42qV8ezRYajmk'
+from config import keys, TOKEN
+from utils import CurrencyConverter, ConvertionException
 
 bot = telebot.TeleBot(TOKEN)
-
-keys = {
-    'Рубль': 'RUB',
-    'Доллар': 'USD',
-    'Евро': 'EURO',
-}
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -25,6 +19,21 @@ def values(message: telebot.types.Message):
     for key in keys.keys():
         text = '\n'.join((text, key,))
         bot.reply_to(message, text)
+
+
+@bot.message_handler(commands=['convert'])
+def convert(message: telebot.types.Message):
+    values = message.text.split(' ')
+
+    if len(values) != 3:
+        raise ConvertionException('Слишком много параметров')
+
+    quote, base, amount = values
+    total_base = CurrencyConverter.convert(quote, base, amount)
+
+    text = f'Цена {amount} {quote} в {base} - {total_base}'
+
+    bot.send_message(message.chat.id, text)
 
 
 bot.polling()
