@@ -29,7 +29,7 @@ class CurrencyConverter:
         except ValueError:
             raise ConvertionException(f'Не удалось обработать количество {amount}')
 
-        r = requests.get('http://api.currencylayer.com/live?access_key=e312102310f35d5c9a003ab5c877a889&format=1')
-        total_base = json.load(r.content)[keys[base]]
+        r = requests.get(f'http://api.currencylayer.com/live?access_key=e312102310f35d5c9a003ab5c877a889&currencies={quote_tiker}&format={quote_base}')
+        total_base = float(json.load(r.content)['quotes'][quote_tiker]) * amount
 
-        return total_base
+        return round(total_base, 3)

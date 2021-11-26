@@ -1,6 +1,6 @@
 import telebot
 from config import keys, TOKEN
-from utils import ConvertionException, CurrencyConverter
+from extensions import ConvertionException, CurrencyConverter
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -24,6 +24,7 @@ def values(message: telebot.types.Message):
 def convert(message: telebot.types.Message):
     try:
         values = message.text.split(' ')
+        values = list(map(str.lower, values))
 
         if len != 3:
             raise ConvertionException('Слишком много параметров.')
